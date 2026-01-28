@@ -1,11 +1,17 @@
+require("dotenv").config()
+const express = require("express");
+const app = express();
+const morgan = require("morgan");
+const mongoose = require("mongoose");
+const mainRouter = require("./routes/main.routes");
+app.use(express.json());
+app.use(morgan("dev"))
+app.use("/api", mainRouter)
 
-const { Router } = require("express");
-const productController = require("../controller/product.controller");
+mongoose.connect(process.env.MONGO_DB_URL)
+.then(() => console.log("connected to db"))
+.catch(() =>  console.log('Connection Failed')
+)
 
-const productRouter = Router()
-productRouter.post("/create", productController.CREATE_PRODUCT)
-productRouter.get("/", productController.GET_PRODUCTS)
-productRouter.get("/:id", productController.GET_PRODUCT)
-productRouter.put("/:id", productController.UPDATE_PRODUCT)
-productRouter.delete("/:id", productController.DELETE_PRODUCT)
-module.exports = productRouter
+let PORT = process.env.PORT || 3000
+app.listen(PORT, () => console.log(`Server is running on ${PORT}`))
